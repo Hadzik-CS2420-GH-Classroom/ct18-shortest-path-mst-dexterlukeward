@@ -2,7 +2,7 @@
 // CT18: Shortest Path & MST — Implementation
 // =============================================================================
 
-#include "WeightedGraph.h"
+#include "include/WeightedGraph.h"
 #include <iostream>
 #include <tuple>
 #include <limits>
@@ -33,8 +33,13 @@ void WeightedGraph::add_vertex(const std::string& vertex) {
 }
 
 void WeightedGraph::add_edge(const std::string& from, const std::string& to, int weight) {
-    // TODO: ensure both vertices exist, then push Edge{to, weight} into
-    //       from's list AND Edge{from, weight} into to's list (undirected)
+    // Ensure both vertices exist
+    add_vertex(from);
+    add_vertex(to);
+
+    // Add the undirected edge (from -> to) and (to -> from)
+    adj_list_[from].push_back(Edge{to, weight});
+    adj_list_[to].push_back(Edge{from, weight});
 }
 
 // =============================================================================
@@ -101,6 +106,38 @@ WeightedGraph::dijkstra(const std::string& source) const {
     // 10. Relax every edge in adj_list_.at(u): compute new_dist = dist[u]
     //     + edge.weight; if new_dist < dist[edge.to], update dist[edge.to]
     //     and min_heap.push({new_dist, edge.to})
+
+    // Initialize distances to infinity for every known vertex
+    for (const auto& [vertex, _] : adj_list_) {
+        dist[vertex] = std::numeric_limits<int>::max();
+    }
+
+    if (!has_vertex(source)) return dist;
+
+    dist[source] = 0;
+
+    using Pair = std::pair<int, std::string>;
+    std::priority_queue<Pair, std::vector<Pair>, std::greater<Pair>> min_heap;
+    min_heap.push({0, source});
+
+    while (!min_heap.empty()) {
+        auto [d, u] = min_heap.top();
+        min_heap.pop();
+
+        // Stale entry check
+        if (d > dist.at(u)) continue;
+
+        // Relaxation step
+        for (const auto& edge : adj_list_.at(u)) {
+            // avoid overflow when dist[u] is INF
+            if (dist.at(u) == std::numeric_limits<int>::max()) continue;
+            int new_dist = dist.at(u) + edge.weight;
+            if (new_dist < dist[edge.to]) {
+                dist[edge.to] = new_dist;
+                min_heap.push({new_dist, edge.to});
+            }
+        }
+    }
     return dist;
 }
 
