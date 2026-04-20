@@ -2,7 +2,7 @@
 // CT18: Shortest Path & MST — Implementation
 // =============================================================================
 
-#include "include/WeightedGraph.h"
+#include "WeightedGraph.h"
 #include <iostream>
 #include <tuple>
 #include <limits>

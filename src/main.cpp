@@ -11,7 +11,7 @@
 //    Provo---2---Logan
 //
 
-#include "include/WeightedGraph.h"
+#include "WeightedGraph.h"
 #include <iostream>
 
 int main() {

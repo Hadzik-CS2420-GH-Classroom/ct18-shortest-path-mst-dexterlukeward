@@ -10,6 +10,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE include)
 
 # --- Google Test ---
 include(FetchContent)
+# Ensure GoogleTest uses the DLL CRT to match the project's default (/MD)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_Declare(googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
     GIT_TAG        v1.14.0)
